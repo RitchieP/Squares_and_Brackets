@@ -1,0 +1,6 @@
+﻿  game.cpp
+C:\Users\user\Documents\USM\Class\Sem2\CPT113\Assignment 2\113_Assign_2\113_Assign_2\game.cpp(7,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  main.cpp
+C:\Users\user\Documents\USM\Class\Sem2\CPT113\Assignment 2\113_Assign_2\113_Assign_2\main.cpp(49,20): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  113_Assign_2.vcxproj -> C:\Users\user\Documents\USM\Class\Sem2\CPT113\Assignment 2\113_Assign_2\Debug\113_Assign_2.exe

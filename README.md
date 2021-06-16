@@ -7,3 +7,5 @@ This is a project built based off of Snakes and Ladders game. It is an assignmen
 - Use at least two of the following data structures: Linked List, Stacks, Queues
 - Other data structures such as Vector, Binary Trees, Arrays are not allowed.
 - Array of objects are allowed
+- Global variables is not allowed
+- Recursion is not allowed

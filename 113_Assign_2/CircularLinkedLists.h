@@ -52,8 +52,10 @@ CircularLinkedList<T>::~CircularLinkedList()
 	}
 }
 
-//Append Node at the end of the list
-//The head pointer will always stay the same
+/*
+	Append Node at the end of the list
+	The head pointer will always stay the same
+*/
 template <typename T>
 void CircularLinkedList<T>::appendNode(T newVal)
 {
@@ -81,6 +83,24 @@ void CircularLinkedList<T>::appendNode(T newVal)
 }
 
 //Return the value of the next Node
+/*
+	In this project, T refers to Player object.
+		It will return the current Player based on 
+		the turns.
+
+	For instance, when n==3, will return 3rd player
+		as object.
+	
+	Also, to avoid it looped inefficiently(n may be 1< n <=30),
+	 inside game.cpp, we only passed which player's turn by using
+	 formula:
+
+	 currentPlayer = (roundNumber % 4)
+
+	Why we use this formula? 
+	
+	See more details inside game.cpp -> startGame()!
+*/
 template <typename T>
 T CircularLinkedList<T>::nextNode(int n)
 {
@@ -95,11 +115,13 @@ T CircularLinkedList<T>::nextNode(int n)
 	return nodePtr->value;
 }
 
-//Set position of the current value
-//Takes in two integer values a arguments
-/*First integer parameter is the number of current player
-if the value passsed is 0, it means the current player is the first player
-Second integer parameter is the latest position of the player on the map*/
+/*
+	Set position of the current value
+	Takes in two integer values a arguments
+	First integer parameter is the number of current player
+	if the value passsed is 0, it means the current player is the first player
+	Second integer parameter is the latest position of the player on the map
+*/
 template <typename T>
 void CircularLinkedList<T>::setPos(int n, int LatestPos)
 {
@@ -116,10 +138,12 @@ void CircularLinkedList<T>::setPos(int n, int LatestPos)
 	nodePtr->value.setPosition(LatestPos);
 }
 
-//To check whether the symbol entered is available
-//Takes in a string value as argument
-//Returns a boolean value
-//Used in game.cpp wildCardPlay() function
+/*
+	To check whether the symbol entered is available
+	Takes in a string value as argument
+	Returns a boolean value
+	Used in game.cpp wildCardPlay() function
+*/
 template <typename T>
 bool CircularLinkedList<T>::checkSymbol(std::string targetSymbol)
 {
@@ -127,25 +151,33 @@ bool CircularLinkedList<T>::checkSymbol(std::string targetSymbol)
 	Node* nodePtr;
 	nodePtr = head;
 
-	while (nodePtr != nullptr)
+	if (nodePtr == nullptr)
 	{
-		if (nodePtr->value.getSymbol() == targetSymbol)
+		std::cout << "Error, Circular Linked List is empty." << std::endl;
+		std::cout << "Inside Circular Linked List checkSymbol() function." << std::endl;
+	}
+	else
+	{
+		for (int i = 0; i < 4; ++i)
 		{
-			flag = true;
-			break;
-		}
-		else
-		{
+			if (nodePtr->value.getSymbol() == targetSymbol)
+			{
+				flag = true;
+				break;
+			}
+
 			nodePtr = nodePtr->next;
 		}
 	}
-	
+
 	return flag;
 }
 
-//Find the order of the player through the node
-//Takes in a string as an argument which is the target player, passing in as their symbol
-//Returns an integer value which is the order of the targeted player
+/*
+	Find the order of the player through the node
+	Takes in a string as an argument which is the target player, passing in as their symbol
+	Returns an integer value which is the order of the targeted player
+*/
 template <typename T>
 int CircularLinkedList<T>::findNode(std::string targetSymbol)
 {
@@ -169,9 +201,11 @@ int CircularLinkedList<T>::findNode(std::string targetSymbol)
 }
 
 
-//Get the value of position of the current node
-//Takes in an integer value as argument which is the order of player
-//Returns an integer value which is the position of the player on the map
+/*
+	Get the value of position of the current node
+	Takes in an integer value as argument which is the order of player
+	Returns an integer value which is the position of the player on the map
+*/
 template <typename T>
 int CircularLinkedList<T>::getNodePos(int n)
 {

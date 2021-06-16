@@ -23,7 +23,7 @@ public:
     void printWildCard(int);
     bool checkPosWildCard(Player&);
     int getWildCard();
-    void wildCardPlay(int, Player&, int);
+    void wildCardPlay(int, Player&, int&, int);
 
     void printDice(int);
     bool isNotWon();

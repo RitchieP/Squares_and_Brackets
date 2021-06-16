@@ -50,6 +50,14 @@ void LinkedList::appendNode(int value, std::string itemsAndPlayers)
 }
 
 //Displays all the node inside the list
+/*
+
+Additional Info:
+	This is function to print out all parts of the maps.
+		It includes the parts to format the "Wild Card" and "Portal"
+		and players on the map.
+
+*/
 void LinkedList::displayAllNode()
 {
 
@@ -62,7 +70,7 @@ void LinkedList::displayAllNode()
 
 	while (nodePtr != nullptr)
 	{
-
+		//Format the numbering inside the map
 		if (count < 9)
 		{
 			std::cout << "   " << nodePtr->value << "   |";
@@ -72,14 +80,34 @@ void LinkedList::displayAllNode()
 			std::cout << "   " << nodePtr->value << "  |";
 		}
 
+		/*
+
+		Additional Info:
+			After print out all the numbering inside map using correct format,
+			Print all items inside each node inside map, including players,
+			"WildCard" and "Portals".
+
+			Reset nodePtr back to each head of each line, for example:
+			Node 1, Node 11, and Node 21.
+		*/
 		if (count == 9)
 		{
 			std::cout << std::endl;
 			nodePtr = head;
 			while (countItems < 10)
 			{
+				/*
+
+				Additional Info:
+					Retrieve items and players in specific node of the map
+					Print it out, depends on the length of the string.
+
+					Proceed 10 nodes each line, and 1 node at a time
+				*/
+
 				std::string itemsOrPlayers = nodePtr->itemsAndPlayers;
 				int len = itemsOrPlayers.length();
+
 				if (countItems == 2)
 				{
 					switch (len)
@@ -334,10 +362,22 @@ void LinkedList::displayAllNode()
 			countItems = 0;
 		}
 		nodePtr = nodePtr->next;
+
+		/*
+
+		Additional Info:
+			Increment the count after each node of the map
+				is printed.
+		*/
 		count++;
 	}
 }
 
+/*
+Additional Info:
+	Append the players into the map's linked list\
+	Takes in the player object as argument
+*/
 void LinkedList::initialize(Player players[])
 {
 	for (int i = 0; i < 4; i++)
@@ -348,9 +388,13 @@ void LinkedList::initialize(Player players[])
 	displayAllNode();
 }
 
-//Return all items in certain requested Node
-//Takes in an integer valuie as argument
-//Integer argument is the position on the map
+/*
+Additional Info:
+
+	Return all items in certain requested Node
+		Takes in an integer valuie as argument
+		Integer argument is the position on the map
+*/
 std::string LinkedList::getPos(int n)
 {
 
@@ -366,7 +410,12 @@ std::string LinkedList::getPos(int n)
 	return nodePtr->itemsAndPlayers;
 }
 
-//old = old position, current = current position, may be > or < old position
+/*
+Additional Info:
+
+	Updates the map by DELETE the old location of the player, and ADD in the new location.
+	Takes in two integer parameters and a string parameter(old & new position, user symbol)
+*/
 void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 {
 	//declare variables
@@ -374,11 +423,8 @@ void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 	Node* nodePtr;
 	nodePtr = head;
 
-	if (old == current)
-	{
-		std::cout << "IT IS GOOODODODODOD" << std::endl;
-	}
-	else if (old < current)
+	//
+	if (old < current)
 	{
 		std::string itemsAndPlayer = nodePtr->itemsAndPlayers;
 
@@ -386,7 +432,6 @@ void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 		{
 			if (c == old)
 			{
-				std::cout << "old<current, "<<symbol<< "Before: "<< nodePtr->itemsAndPlayers << std::endl;
 				//find the symbol index
 				int index = 0;
 				char target = symbol[0];
@@ -399,7 +444,6 @@ void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 					}
 				}
 				nodePtr->itemsAndPlayers.erase(index, 1);
-				std::cout << "old<current, "<<symbol<< "After: "<< nodePtr->itemsAndPlayers << std::endl;
 			}
 			else if (c == current)
 			{
@@ -418,7 +462,6 @@ void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 			if (c == old)
 			{
 				std::string itemsAndPlayer = nodePtr->itemsAndPlayers;
-				std::cout << "old>current, "<<symbol<<"Before: "<< nodePtr->itemsAndPlayers << std::endl;
 
 				int index = 0;
 				char target = symbol[0];
@@ -431,12 +474,10 @@ void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 					}
 				}
 				nodePtr->itemsAndPlayers.erase(index, 1);
-				std::cout << "old>current, "<<symbol<< "After: "<< nodePtr->itemsAndPlayers << std::endl;
 			}
 			if (c == current)
 			{
 				std::string itemsAndPlayer = nodePtr->itemsAndPlayers;
-				std::cout << "CURRENTTTTT" << std::endl;
 
 				//Insert the character at the end of the string
 				itemsAndPlayer.push_back(symbol[0]);
@@ -448,52 +489,3 @@ void LinkedList::deleteOldAddNew(int old, int current, std::string symbol)
 	}
 }
 
-//Delete player from old location
-void LinkedList::deleteOld(int oldLocation, std::string symbol)
-{
-	int c = 0;
-	Node* nodePtr = nullptr;
-	nodePtr = head;
-
-	while (c != oldLocation)
-	{
-
-		nodePtr = nodePtr->next;
-		c++;
-	}
-	if (c == oldLocation)
-	{
-		std::string itemsAndPlayer = nodePtr->itemsAndPlayers;
-
-		int index = 0;
-		char target = symbol[0];
-		for (int i = 0; i < itemsAndPlayer.length(); i++)
-		{
-			if (nodePtr->itemsAndPlayers.at(i) == target)
-			{
-				index = i;
-				break;
-			}
-		}
-		nodePtr->itemsAndPlayers.erase(index, 1);
-	}
-}
-
-//Append player to new location
-void LinkedList::appendNew(int newLocation, std::string symbol)
-{
-	int c = 0;
-	Node* nodePtr = nullptr;
-	nodePtr = head;
-
-	while (c <= newLocation)
-	{
-
-		if (c == newLocation)
-		{
-			nodePtr->itemsAndPlayers = nodePtr->itemsAndPlayers.append(symbol);
-		}
-		nodePtr = nodePtr->next;
-		c++;
-	}
-}

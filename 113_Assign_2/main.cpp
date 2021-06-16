@@ -4,9 +4,10 @@
 using namespace std;
 
 void setData(Player[]);
+int titleScreen();
+void printRules();
 
 int main() {
-	system("cls");
 
 	//Print the name of our game
 	cout << "  _________________   ____ ___  _____ _____________________ _________    ____     \n";
@@ -23,15 +24,14 @@ int main() {
 	cout << "        \\/        \\/         \\/        \\/        \\/        \\/                  \\/\n";
 
 	//Printing the initial prompt menu
-	cout << "\n\n\nThis is SQUARES & BRACKETS game." << endl;
-	cout << "The game will be separated into two groups, each group having two persons." << endl;
-	cout << "The first player and the third player will be in one group. While the other two players will be in one group.\n" << endl;
+	int choice = titleScreen();
 
-	cout << "\nThen game will proceed with each players throwing a dice," << endl;
-	cout << "and the player order will be decided based on the dot count of the dice from highest to lowest.\n\n" << endl;
-	cout << "The game will end when one player reaches the end of the map, and his/her respective group will win." << endl;
-	cout << "|--------------------------------------------------------------------------------------------------------------|" << endl;
+	while (choice == 1) {
+		printRules();
+		choice = titleScreen();
+	}
 
+	cout << "================================================================================\n|                                                                               |\n|\tStart Game                                                              |\n|                                                                               |\n================================================================================\n";
 	//Create array of objects and set the data
 	Player players[4];
 	setData(players);
@@ -42,7 +42,6 @@ int main() {
 
 	//start game!
 	game.startGame();
-
 }
 
 bool ifRepeatedSymbol(string str, char symbol) {
@@ -93,4 +92,36 @@ void setData(Player players[]) {
 
 		players[i].setSymbol(tempSymbol);
 	}
+}
+
+int titleScreen() {
+	cout << "\nPlease select: \n\n\t( 1 ) Read Game Rules Before Start ( Most Recommended! )\n\t( 2 ) Start the game! ( I already played this game at least once! ) \n\n Choice:\t";
+	int choice;
+	cin >> choice;
+	while (choice != 1 && choice != 2) {
+		cout << "Sorry! Choice entered invalid...Enter again! \nChoice:\t";
+		cin >> choice;
+	}
+	cin.ignore();
+	return choice;
+}
+
+void printRules() {
+	cout << "================================================================================\n|                                                                               |\n|\tRules                                                                   |\n|                                                                               |\n================================================================================";
+	cout << "\n\nThis is SQUARES & BRACKETS game." << endl;
+	cout << "The game will be separated into two groups, each group having two persons." << endl;
+	cout << "The first player and the third player will be in one group. While the other two players will be in one group.\n" << endl;
+
+	cout << "\nThen game will proceed with each players throwing a dice," << endl;
+	cout << "and the player order will be decided based on the group number from 1 to 2." << endl;
+	cout << "The game will end when one player reaches the end of the map, and his/her respective group will win.\n" << endl;
+
+	cout << "\nWhen player reach WildCard," << endl;
+	cout << "Player will draw one card and do as the card told. \n" << endl;
+
+	cout << "\nWhen player reach Portals," << endl;
+	cout << "Player will teleport forward or back based on different portals. \n" << endl;
+
+	cout << "!! Player only can do one Portal or one WildCard in each turn! \n" << endl;
+
 }

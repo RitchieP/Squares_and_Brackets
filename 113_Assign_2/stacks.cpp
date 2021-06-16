@@ -63,6 +63,10 @@ int Stacks::pop()
 	return insLabel;
 }
 
+/*
+	Returns the size of the stack
+	Which is the number of nodes inside the stack
+*/
 int Stacks::sizeOfStack()
 {
 	int count = 0;

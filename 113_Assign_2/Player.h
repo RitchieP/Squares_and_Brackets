@@ -10,9 +10,9 @@ public:
 	Player();
 	~Player();
 
-    void setName(std::string);
-    void setSymbol(std::string);
-    void setPosition(int);
+	void setName(std::string);
+	void setSymbol(std::string);
+	void setPosition(int);
 	void setGroupNumber(int);
 	std::string getName();
 	std::string getSymbol();

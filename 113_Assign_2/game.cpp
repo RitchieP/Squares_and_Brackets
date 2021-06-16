@@ -6,6 +6,8 @@ Game::Game()
 	//Initialize random seed with time
 	srand(time(NULL));
 
+	//Insert "WildCard" position with '!' to Map LinkedList in specific location
+	//	Else insert empty string.
 	for (int i = 1; i <= 30; i++)
 	{
 		if (i == 4 || i == 10 || i == 17 || i == 22 || i == 28)
@@ -24,14 +26,16 @@ Game::~Game()
 {
 }
 
-//Prints the map with players position
+//Prints the map with players position and other items(such as WildCard and Portal)
 void Game::printUpdatedMap()
 {
 	linklist.displayAllNode();
 }
 
-//Throws the dice
-//Returns an integer value
+/*
+	Throws the dice randomly for each player.
+	Returns an integer value
+*/
 int Game::throwDice()
 {
 
@@ -45,7 +49,7 @@ void Game::randomWildCards()
 {
 	int randNum;
 
-	//Randomly insert ten instructions into the stack
+	//Randomly insert ten instructions into the stack (stack is our stack of WildCard)
 	for (int i = 1; i <= 10; i++)
 	{
 		randNum = rand() % 4 + 1;
@@ -65,33 +69,35 @@ void Game::randomWildCards()
 			stack.push(ins4);
 			break;
 		default:
-			std::cout << "Error, randomized number does not match the switch cases." << std::endl;
+			std::cout << "\tError, randomized number does not match the switch cases." << std::endl;
 			break;
 		}
 	}
 }
 
-//Print the instruction of the wild card
-//If the player position is a wild card position
+/*
+	Print the instruction of the wild card, based on id(parameter of this function) of WildCard.
+	If the player position is a wild card position
+*/
 void Game::printWildCard(int insLabel)
 {
 	switch (insLabel)
 	{
 	case 1:
 		std::cout << "\n_________________________________________________\n";
-		std::cout << "|Move a player back 5 steps\n|\n|_________________________________________________\n";
+		std::cout << "|\tMove a player back 5 steps\n|\n|_________________________________________________\n";
 		break;
 	case 2:
 		std::cout << "\n_________________________________________________\n";
-		std::cout << "|Move a player back 10 steps\n|\n|_________________________________________________\n";
+		std::cout << "|\tMove a player back 10 steps\n|\n|_________________________________________________\n";
 		break;
 	case 3:
 		std::cout << "\n_________________________________________________\n";
-		std::cout << "|Promote yourself 5 steps\n|\n|_________________________________________________\n";
+		std::cout << "|\tPromote yourself 5 steps\n|\n|_________________________________________________\n";
 		break;
 	case 4:
 		std::cout << "\n_________________________________________________\n";
-		std::cout << "|Promote yourself 10 steps \n|\n|_________________________________________________\n";
+		std::cout << "|\tPromote yourself 10 steps \n|\n|_________________________________________________\n";
 		break;
 	default:
 		break;
@@ -99,8 +105,11 @@ void Game::printWildCard(int insLabel)
 }
 
 //Check whether the player position is a wild card position
+//	If yes, return True, return false otherwise.
 bool Game::checkPosWildCard(Player& curPlayer)
 {
+	//check node of player's current location consists '!', indicates
+	//	player reached "WildCard". 
 	if (linklist.getPos(curPlayer.getPos()).at(0) == '!')
 	{
 		return true;
@@ -111,10 +120,15 @@ bool Game::checkPosWildCard(Player& curPlayer)
 	}
 }
 
-//Play of the wild card
-//Takes in an integer as argument
-//Integer argument determines which wild card play should be performed.
-void Game::wildCardPlay(int insLabel, Player& curPlayer, int newPos)
+/*
+	Play of the wild card
+	Takes in an integer as argument
+	Integer argument determines which wild card play should be performed.
+
+	Also EXECUTE instruction based on the WildCard, 
+		such as Promote self, or throw other players.
+*/
+void Game::wildCardPlay(int insLabel, Player& curPlayer, int& curPos, int playerOrder)
 {
 	std::string userChoice;
 	int orderPlayer = 0, posPlayer = 0;
@@ -123,14 +137,14 @@ void Game::wildCardPlay(int insLabel, Player& curPlayer, int newPos)
 	{
 		//Throw a player back 5
 	case 1:
-		std::cout << "Select a player to move by keying in their symbol." << std::endl;
+		std::cout << "\tSelect a player to move by keying in their symbol." << std::endl;
 		std::cin >> userChoice;
 
 		//Validate the input to have the available player
 		//And not choose themselves
-		while (!playerList.checkSymbol(userChoice) && userChoice != curPlayer.getSymbol())
+		while (!playerList.checkSymbol(userChoice) || userChoice == curPlayer.getSymbol())
 		{
-			std::cout << "Invalid input, try again." << std::endl;
+			std::cout << "\tInvalid input, try again." << std::endl;
 			std::cin >> userChoice;
 		}
 
@@ -143,13 +157,11 @@ void Game::wildCardPlay(int insLabel, Player& curPlayer, int newPos)
 		if (posPlayer - 5 < 0)
 		{
 			playerList.setPos(orderPlayer, 0);
-			std::cout << "selected: " << userChoice << ", old: " << posPlayer << ", new: 0" << std::endl;
 			linklist.deleteOldAddNew(posPlayer, 0, userChoice);
 		}
 		else
 		{
 			playerList.setPos(orderPlayer, posPlayer - 5);
-			std::cout << "selected: " << userChoice << "old: " << posPlayer << ", new: " << posPlayer - 5 << std::endl;
 			linklist.deleteOldAddNew(posPlayer, posPlayer - 5, userChoice);
 		}
 
@@ -157,13 +169,13 @@ void Game::wildCardPlay(int insLabel, Player& curPlayer, int newPos)
 
 		//Throw a player back 10 steps
 	case 2:
-		std::cout << "Select a player to move by keying in their symbol." << std::endl;
+		std::cout << "\tSelect a player to move by keying in their symbol." << std::endl;
 		std::cin >> userChoice;
 
 		//Validate the input to have the available player
-		while (!playerList.checkSymbol(userChoice))
+		while (!playerList.checkSymbol(userChoice) || userChoice == curPlayer.getSymbol())
 		{
-			std::cout << "Invalid input, try again." << std::endl;
+			std::cout << "\tInvalid input, try again." << std::endl;
 			std::cin >> userChoice;
 		}
 
@@ -176,71 +188,73 @@ void Game::wildCardPlay(int insLabel, Player& curPlayer, int newPos)
 		if (posPlayer - 10 < 0)
 		{
 			playerList.setPos(orderPlayer, 0);
-			std::cout <<"selected: "<<userChoice<<"old: "<< posPlayer <<", new: 0"<< std::endl;
 			linklist.deleteOldAddNew(posPlayer, 0, userChoice);
 		}
 		else
 		{
 			playerList.setPos(orderPlayer, posPlayer - 10);
-			std::cout <<"selected: "<<userChoice<<"old: "<< posPlayer <<", new: "<<posPlayer-10<< std::endl;
 			linklist.deleteOldAddNew(posPlayer, posPlayer - 10, userChoice);
 		}
 
 		break;
 
 		//Promote 5
-		//TODO: Fix position issue
+		//It will promote curPlayer(stands for current Player) by 5,
+		//	update on map linklist and player circular linked list.
 	case 3:
 		orderPlayer = playerList.findNode(curPlayer.getSymbol());
 
-		if (newPos + 5 > 29)
+		if (curPos + 5 > 29)
 		{
-			posPlayer = 58 - (newPos + 5);
+			posPlayer = 58 - (curPos + 5);
 		}
 		else
 		{
-			posPlayer = newPos + 5;
+			posPlayer = curPos + 5;
 		}
-		playerList.setPos(orderPlayer, posPlayer);
-		std::cout <<"selected: "<<curPlayer.getSymbol()<<"old: "<< newPos <<", new: "<<posPlayer<< std::endl;
-		linklist.deleteOldAddNew(newPos, posPlayer, curPlayer.getSymbol());
+		playerList.setPos(playerOrder, posPlayer);
+		linklist.deleteOldAddNew(curPos, posPlayer, curPlayer.getSymbol());
 
-
+		curPos = posPlayer;
 		break;
 
 		//Promote 10
+		//It will promote curPlayer(stands for current Player) by 5,
+		//	update on map linklist and player circular linked list.
 	case 4:
 		orderPlayer = playerList.findNode(curPlayer.getSymbol());
 
-		if (newPos + 10 > 29)
+		if (curPos + 10 > 29)
 		{
-			posPlayer = 58 - (newPos + 10);
+			posPlayer = 58 - (curPos + 10);
 		}
 		else
 		{
-			posPlayer = newPos + 10;
+			posPlayer = curPos + 10;
 		}
-		playerList.setPos(orderPlayer, posPlayer);
-		std::cout <<"selected: "<<curPlayer.getSymbol()<<"old: "<< newPos <<", new: "<<posPlayer<< std::endl;
-		linklist.deleteOldAddNew(newPos, posPlayer, curPlayer.getSymbol());
+		playerList.setPos(playerOrder, posPlayer);
+		linklist.deleteOldAddNew(curPos, posPlayer, curPlayer.getSymbol());
 
+		curPos = posPlayer;
 		break;
 
 		//Display error message
 	default:
-		std::cout << "Error, something went wrong in wildCardPlay() function." << std::endl;
+		std::cout << "\tError, something went wrong in wildCardPlay() function." << std::endl;
 
 		break;
 	}
 }
 
-//Return the wild card popped from a stack of Wild Cards
+//Pop and return the wild card popped from a stack of Wild Cards
 int Game::getWildCard()
 {
+	//Get the first card from stacks, 
+	//	Do this by using .pop() function. 
 	return stack.pop();
 }
 
-//Print dice, takes in an integer as an argument.
+//Print respective dice, takes in an integer as parameter.
 void Game::printDice(int n)
 {
 	if (n == 1)
@@ -289,15 +303,19 @@ void Game::printDice(int n)
 	std::cout << std::endl;
 }
 
-//Determine whether the game has ended or not.
-//Returns a boolean value
+/*
+	Determine whether the game has ended or not.
+	Returns a boolean value
+*/
 bool Game::isNotWon()
 {
 	return (winGroupNumber == 0);
 }
 
-//Insert the order of players from arrays of object ( parameter passed from main.cpp )
-//  into the Circular Linked List
+/*
+	Insert the order of players from arrays of object ( parameter is passed from main.cpp )
+	into the Circular Linked List
+*/
 void Game::initializeAllPlayers(Player players[])
 {
 	playerList.appendNode(players[0]);
@@ -320,7 +338,6 @@ void Game::initializeAllPlayers(Player players[])
 void Game::startGame()
 {
 
-	//To keep track of the current player
 	/*
 		We store the player object using the circular linked list. We pass which player
 		  we need to store as parameter.
@@ -338,6 +355,8 @@ void Game::startGame()
 
 	*/
 	Player currentPlayer = playerList.nextNode(totalRound % 4);
+
+	//variables to store current player's information
 	int diceRolled, groupNumber, currentLocation, newPos;
 	diceRolled = 0;
 	std::string name, symbol, any;
@@ -355,11 +374,12 @@ void Game::startGame()
 		name = currentPlayer.getName();
 		currentLocation = currentPlayer.getPos();
 		groupNumber = currentPlayer.getGroupNumber();
+		bool flag = false;
 
 		//Inform user which player's turn now
-		std::cout << "\n_________________________________________________\n|\n|Now is Team #" << groupNumber << " " << name << "'s turn. Enter any key to roll dice.... ";
+		std::cout << "\n_________________________________________________\n|\n|\tNow is Team #" << groupNumber << " " << name << "'s turn. Enter any key to roll dice.... ";
 		std::cin >> any;
-		std::cout << "|_________________________________________________";
+		std::cout << "|_________________________________________________\n";
 		//Always wait until the user enters any key
 		if (any != "")
 		{
@@ -368,7 +388,7 @@ void Game::startGame()
 			diceRolled = throwDice();
 
 			//Print user threw how many points from dice
-			std::cout << "\n" << name << " threw " << diceRolled << std::endl;
+			std::cout << "----------------------------------------\n|\t" << name << " threw " << diceRolled <<"! \n\n----------------------------------------"<< std::endl;
 			printDice(diceRolled);
 
 			/*
@@ -394,70 +414,71 @@ void Game::startGame()
 				newPos = currentLocation + diceRolled;
 			}
 
-			//Wild card plays
+			//Check if player reach "WildCard" nodes
 			if (newPos == 3 || newPos == 9 || newPos == 16 || newPos == 21 || newPos == 27)
 			{
-				//Retreieve the new position first, then play the wild cards based off from there
+				//Retreieve the new position first, 
+				//	then play the wild cards based off from there
 				playerList.setPos(totalRound % 4, newPos);
 				linklist.deleteOldAddNew(currentLocation, newPos, currentPlayer.getSymbol());
 				currentLocation = newPos;
 				printUpdatedMap();
 
+				//Update again the current Player object
+				//	after updated.
 				currentPlayer = playerList.nextNode(totalRound % 4);
+
+				//Play WildCard using newer location of player
 				wildCards = getWildCard();
 				printWildCard(wildCards);
-				wildCardPlay(wildCards, currentPlayer, newPos);
-				//Because wild card three and four is promoting themselves, have to update here
-				if (wildCards == 3 || wildCards == 4)
+				wildCardPlay(wildCards, currentPlayer, newPos, totalRound % 4);
+			}
+			else
+			{
+				//Teleportation plays
+				if (newPos == 2)
 				{
-					newPos = currentPlayer.getPos();
+					newPos += 2;
+					std::cout << "\n__________________________________________________\n";
+					std::cout << "|\tMove front 2 steps. To: " << newPos + 1 << "\n|\n|_________________________________________________\n";
 				}
-				currentLocation= newPos;
-				playerList.setPos(totalRound % 4, currentLocation);
+				else if (newPos == 6)
+				{
+					newPos -= 5;
+					std::cout << "\n_________________________________________________\n";
+					std::cout << "|\tMove back 5 steps. To: " << newPos + 1 << "\n|\n|_________________________________________________\n";
+				}
+				else if (newPos == 11)
+				{
+					newPos -= 3;
+					std::cout << "\n_________________________________________________\n";
+					std::cout << "|\tMove back 3 steps. To: " << newPos + 1 << "\n|\n|_________________________________________________\n";
+				}
+				else if (newPos == 15)
+				{
+					newPos += 4;
+					std::cout << "\n_________________________________________________\n";
+					std::cout << "|\tMove front 4 steps. To: " << newPos + 1 << "\n|\n|_________________________________________________\n";
+				}
+				else if (newPos == 22)
+				{
+					newPos -= 5;
+					std::cout << "\n_________________________________________________\n";
+					std::cout << "|\tMove back 5 steps. To: " << newPos + 1 << "\n|\n|_________________________________________________\n";
+				}
+				else if (newPos == 26)
+				{
+					newPos -= 3;
+					std::cout << "\n__________________________________________________\n";
+					std::cout << "|\tMove back 3 steps. To: " << newPos + 1 << "\n|\n|_________________________________________________\n";
+				}
+
+				//Update player's newest location
+				playerList.setPos(totalRound % 4, newPos);
+				linklist.deleteOldAddNew(currentLocation, newPos, currentPlayer.getSymbol());
 			}
 
-			//Teleportation plays
-			if (newPos == 2)
-			{
-				newPos += 2;
-				std::cout << "\n__________________________________________________\n";
-				std::cout << "|Move front 2 steps. To: " << newPos << "\n|\n|_________________________________________________\n";
-			}
-			else if (newPos == 6)
-			{
-				newPos -= 5;
-				std::cout << "\n_________________________________________________\n";
-				std::cout << "|Move back 5 steps. To: " << newPos << "\n|\n|_________________________________________________\n";
-			}
-			else if (newPos == 11)
-			{
-				newPos -= 3;
-				std::cout << "\n_________________________________________________\n";
-				std::cout << "|Move back 3 steps. To: " << newPos << "\n|\n|_________________________________________________\n";
-			}
-			else if (newPos == 15)
-			{
-				newPos += 4;
-				std::cout << "\n_________________________________________________\n";
-				std::cout << "|Move front 4 steps. To: " << newPos << "\n|\n|_________________________________________________\n";
-			}
-			else if (newPos == 22)
-			{
-				newPos -= 5;
-				std::cout << "\n_________________________________________________\n";
-				std::cout << "|Move back 5 steps. To: " << newPos << "\n|\n|_________________________________________________\n";
-			}
-			else if (newPos == 26)
-			{
-				newPos -= 3;
-				std::cout << "\n__________________________________________________\n";
-				std::cout << "|Move back 3 steps. To: " << newPos << "\n|\n|_________________________________________________\n";
-			}
-			
-			playerList.setPos(totalRound % 4, newPos);
-			linklist.deleteOldAddNew(currentLocation, newPos, currentPlayer.getSymbol());
-			currentLocation = newPos;
-
+			//Print out the updated map
 			printUpdatedMap();
 
 			//Update the players current location
@@ -495,6 +516,8 @@ void Game::startGame()
 					std::cout << "\t \\______  /|____|_  /\\_______  /______/  |____|     \\_______ \\\n";
 					std::cout << "\t        \\/        \\/         \\/                             \\/\n";
 				}
+				std::cout << "\n\n=====================================================================\n";
+				std::cout << "=====================================================================\n";
 				std::cout << "___________.__                   __               _____              \n";
 				std::cout << "\\__    ___/|  |__ _____    ____ |  | __  ______ _/ ____\\___________  \n";
 				std::cout << "  |    |   |  |  \\\\__  \\  /    \\|  |/ / /  ___/ \\   __\\/  _ \\_  __ \\ \n";
@@ -507,6 +530,8 @@ void Game::startGame()
 				std::cout << " |    |   |  |__/ __ \\\\___  ||  |   |  \\/ /_/  >                     \n";
 				std::cout << " |____|   |____(____  / ____||__|___|  /\\___  /                      \n";
 				std::cout << "                    \\/\\/             \\//_____/                       \n";
+				std::cout << "\n=====================================================================\n";
+				std::cout << "=====================================================================\n";
 				exit(0);
 			}
 			//otherwise, increment totalround by 1.
